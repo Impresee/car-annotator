@@ -11,15 +11,17 @@ from PIL import ImageTk, Image
 import glob
 import os
 
+#Z:\BDP\bdp_1800_200dpi\CAR\images
+#Z:\BDP\bdp_1800_200dpi\CAR\annotations
 
 class App(tk.Frame):
     """ 
     Clase que crea los bounding box. 
     """
-    def __init__( self, parent):
+    def __init__( self, parent, width_canvas, height_canvas):
         tk.Frame.__init__(self, parent)
         self._createVariables(parent)
-        self._createCanvas()
+        self._createCanvas(width_canvas, height_canvas)
         self._createCanvasBinding()
 
     def _createVariables(self, parent):
@@ -31,11 +33,11 @@ class App(tk.Frame):
         self.rectid = None
         self.move = False
 
-    def _createCanvas(self):
-        self.canvas = tk.Canvas(self.parent, width = 800, height = 200,
+    def _createCanvas(self, width_canvas, height_canvas):
+        self.canvas = tk.Canvas(self.parent, width = width_canvas, height = height_canvas,
                                 bg = "white" )
         self.canvas.grid(row=1, column=0, columnspan=4, sticky='nsew')
-        
+
         
     def _createCanvasBinding(self):
         self.canvas.bind( "<Button-1>", self.startRect )
@@ -76,14 +78,12 @@ class App(tk.Frame):
         self.canvas.coords(self.rectid, self.rectx0, self.recty0,
                       self.rectx1, self.recty1)
         #print('Rectangle ended')
-        global doubled
-        scale = 1
-        if doubled:
-            scale = 0.5
-        x = int(self.rectx0 * scale)
-        y = int(self.recty0 * scale)
-        w = int(abs(self.rectx0-self.rectx1) * scale)
-        h = int(abs(self.recty0-self.recty1) * scale)
+        global scale_img
+        factor = 1/scale_img
+        x = int(self.rectx0 * factor)
+        y = int(self.recty0 * factor)
+        w = int(abs(self.rectx0-self.rectx1) * factor)
+        h = int(abs(self.recty0-self.recty1) * factor)
         rect = Rect(x, y, w, h)
         rect_lst.append(rect)
 
@@ -112,11 +112,21 @@ def generar_anotacion(ents):
         ents[1].insert('1.0', err)
         return
     text = ''
+    global width_img, height_img
     for i, digit in enumerate(_input):
-        text = text + '%s: %s\n' % (digit, rect_lst[i].to_string())        
+        x = rect_lst[i].x
+        y = rect_lst[i].y
+        w = rect_lst[i].w
+        h = rect_lst[i].h
+        if x < width_img and y < height_img and x + w < width_img and y + h < height_img:
+            text = text + '%s: %s\n' % (digit, rect_lst[i].to_string()) 
+        else:
+            text = 'Los bounding box deben estar dentro de la imagen'
+            break
     ents[1].delete('1.0', tk.END)
     ents[1].insert('1.0', text)
     
+
     
 def reset(ents, filename):
     """Resetea y carga una nueva imagen en el canvas.
@@ -133,19 +143,24 @@ def reset(ents, filename):
         root.mainloop()
         return
     in_path = ents[2].get().strip()
-    global rect_lst
+    global rect_lst, width_canvas, height_canvas
     rect_lst = []
     path_file = os.path.join(in_path, filename)
     image = cv2.imread(path_file,0)
-    width = image.shape[1]
-    height = image.shape[0]
-    global doubled
-    if width < 400 and height < 100: 
-        doubled = True
-        dim = (width * 2, height * 2)
-        image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+    global scale_img, width_img, height_img
+    width_img = image.shape[1]
+    height_img = image.shape[0]
+    if width_img > width_canvas or height_img > height_canvas: 
+        scale_img = 0.5
+    elif width_img < width_canvas / 2 and height_img < height_canvas / 2: 
+        scale_img = 2
     else:
-        doubled = False
+        scale_img = 1
+    if scale_img != 1:
+        dim = (int(width_img * scale_img), int(height_img * scale_img))
+        image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
+        
+    #print(width_img, height_img)
     image = Image.fromarray(image)
     image = ImageTk.PhotoImage(image)
     app.canvas.create_image(0, 0, image = image, anchor = "nw")
@@ -273,16 +288,25 @@ def clear(ents):
    """
     reset(ents, current_filename)
 
+width_app = 800 # ancho app
+height_app = 600 # alto app
+width_canvas = width_app # ancho canvas
+height_canvas = height_app / 3 # alto canvas
+
 root = tk.Tk()
-root.title("Select ROI")
-root.geometry( "800x600" )
-app = App(root)
+root.title('Select ROI')
+root.geometry('%dx%d+0+0' % (width_app, height_app))
+app = App(root, width_canvas, height_canvas)
 
 rect_lst = [] # lista de rectangulos
 current_filename = '' # nombre de la imagen que se está mostrando en el canvas
 counter = 0 # indice de la imagen actual respecto a todas las imagenes faltantes sin anotación
 doubled = False # indica si la imagen actual está escalada al doble
 total = 0 # total de imágenes sin anotación
+width_img = 0 # ancho imagen mostrada
+height_img = 0 # alto imagen mostrada
+scale_img = 1 # escala de la imagen actual
+
 
 label3 = tk.Label(root, text= 'Seleccione carpetas de entrada y salida', font = "16")
 label3.grid(row=0, column=0, columnspan=4)
