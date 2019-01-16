@@ -317,28 +317,28 @@ width_img = 0 # ancho imagen mostrada
 height_img = 0 # alto imagen mostrada
 scale_img = 1 # escala de la imagen actual
 
-in_path_label = tk.Label(root, text= 'Path de entrada:', font = "16")
+in_path_label = tk.Label(root, text= 'Path de entrada:', font = "Calibri 11")
 in_path_label.grid(row=0, column=0, sticky='w', padx=10)
 
-in_path = tk.Entry(root)
+in_path = tk.Entry(root, font = "Calibri 11")
 in_path.grid(row=0, column=1, columnspan=4, sticky='nsew')
 
-out_path_label = tk.Label(root, text= 'Path de salida:', font = "16")
+out_path_label = tk.Label(root, text= 'Path de salida:', font = "Calibri 11")
 out_path_label.grid(row=1, column=0, sticky='w', padx=10)
 
-out_path = tk.Entry(root)
+out_path = tk.Entry(root, font = "Calibri 11")
 out_path.grid(row=1, column=1, columnspan=4, sticky='nsew')
 
-label3 = tk.Label(root, text= 'Seleccione carpetas de entrada y salida', font = "16")
+label3 = tk.Label(root, text= 'Seleccione carpetas de entrada y salida', font = "Calibri 14")
 label3.grid(row=2, column=0, columnspan=4)
 
-label1 = tk.Label(root, text= 'Input:', font = "20")
+label1 = tk.Label(root, text= 'Input:', font = "Calibri 20")
 label1.grid(row=4, column=0, sticky='w', padx=10)
 
-ent = tk.Entry(root, font = "20")
+ent = tk.Entry(root, font = "Calibri 20")
 ent.grid(row=4, column=1, columnspan=4, sticky='nsew')
 
-label2 = tk.Label(root, text= 'Output:', font = "16")
+label2 = tk.Label(root, text= 'Output:', font = "Calibri 14")
 label2.grid(row=6, column=0, columnspan=4, sticky='nsew')
 
 res = tk.Text(root)
