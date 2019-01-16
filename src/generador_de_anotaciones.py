@@ -377,21 +377,6 @@ for tecla in teclado:
     tk.Button(root, text=tecla, width=3, height=2, font = "bold 16", command=(lambda e= tecla: action(e))).grid(row=row, column=column)
     i += 1
     j += 1
-    
-"""
-tk.Button(root, text="$", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text='*', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text='0', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text='1', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text="2", width=3, height=2, command=lambda:action('3')).grid(row=10, column=5)
-tk.Button(root, text="3", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text='4', width=3, height=2, command=lambda:action('3')).grid(row=8, column=5)
-tk.Button(root, text='5', width=3, height=2, command=lambda:action('3')).grid(row=9, column=5)
-tk.Button(root, text="6", width=3, height=2, command=lambda:action('3')).grid(row=10, column=5)
-tk.Button(root, text="7", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
-tk.Button(root, text='8', width=3, height=2, command=lambda:action('3')).grid(row=8, column=5)
-tk.Button(root, text='9', width=3, height=2, command=lambda:action('3')).grid(row=9, column=5)
-"""
 
 reset(ents, '')
 
