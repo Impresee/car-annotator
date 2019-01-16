@@ -297,6 +297,10 @@ def clear(ents):
         void
    """
     reset(ents, current_filename)
+    
+def action(x): 
+  """Para presionar una tecla del teclado virtual"""
+  ent.insert(tk.END, x)
 
 width_app = 800 # ancho app
 height_app = 600 # alto app
@@ -341,8 +345,8 @@ ent.grid(row=4, column=1, columnspan=4, sticky='nsew')
 label2 = tk.Label(root, text= 'Output:', font = "Calibri 14")
 label2.grid(row=6, column=0, columnspan=4, sticky='nsew')
 
-res = tk.Text(root)
-res.grid(row=7, column=0, columnspan=4, sticky='nsew')
+res = tk.Text(root, height=8, width=30)
+res.grid(row=7, column=0, rowspan=4, columnspan=4, sticky='nsew')
 
 ents = [ent, res, in_path, out_path]
 
@@ -360,6 +364,34 @@ botton3.config(state=tk.DISABLED)
 
 botton4 = tk.Button(root, text='Siguiente', fg="black", font = "bold 16", command=(lambda e= ents: next_file(e)))
 botton4.grid(row=5, column=0, sticky='nsew', pady=10)
+
+
+#Generating Buttons
+teclado = ['$', '*']
+for i in range(0, 10):
+    teclado.append(str(i))
+i, j = 0, 0
+for tecla in teclado:
+    row = 7 + i // 4 
+    column = 5 + j % 4
+    tk.Button(root, text=tecla, width=3, height=2, font = "bold 16", command=(lambda e= tecla: action(e))).grid(row=row, column=column)
+    i += 1
+    j += 1
+    
+"""
+tk.Button(root, text="$", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text='*', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text='0', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text='1', width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text="2", width=3, height=2, command=lambda:action('3')).grid(row=10, column=5)
+tk.Button(root, text="3", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text='4', width=3, height=2, command=lambda:action('3')).grid(row=8, column=5)
+tk.Button(root, text='5', width=3, height=2, command=lambda:action('3')).grid(row=9, column=5)
+tk.Button(root, text="6", width=3, height=2, command=lambda:action('3')).grid(row=10, column=5)
+tk.Button(root, text="7", width=3, height=2, command=lambda:action('3')).grid(row=7, column=5)
+tk.Button(root, text='8', width=3, height=2, command=lambda:action('3')).grid(row=8, column=5)
+tk.Button(root, text='9', width=3, height=2, command=lambda:action('3')).grid(row=9, column=5)
+"""
 
 reset(ents, '')
 
