@@ -87,9 +87,6 @@ class App(tk.Frame):
         h = int(abs(self.recty0 - self.recty1) * factor)
         rect = Rect(x, y, w, h)
         rect_lst.append(rect)
-        print(x,y,w,h)
-        print(width_img, height_img)
-
 
 def generar_anotacion(ents):
     """Genera la anotación (output)
