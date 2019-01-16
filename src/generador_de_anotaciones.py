@@ -280,7 +280,8 @@ def next_file(ents):
             counter = 0
     global current_filename
     current_filename = filename
-    label3.config(text= txt_label)
+    label_name.delete(0, tk.END)
+    label_name.insert(0, txt_label)
     if total != 0:
         botton1.config(state=tk.NORMAL)
         botton2.config(state=tk.NORMAL)
@@ -333,8 +334,8 @@ out_path_label.grid(row=1, column=0, sticky='w', padx=10)
 out_path = tk.Entry(root, font = "Calibri 11")
 out_path.grid(row=1, column=1, columnspan=4, sticky='nsew')
 
-label3 = tk.Label(root, text= 'Seleccione carpetas de entrada y salida', font = "Calibri 14")
-label3.grid(row=2, column=0, columnspan=4)
+label_name = tk.Entry(root, text= 'Seleccione carpetas de entrada y salida', bg='gray94', font = "Calibri 12")
+label_name.grid(row=2, column=1, columnspan=2, sticky='nsew', pady=10)
 
 label1 = tk.Label(root, text= 'Input:', font = "Calibri 20")
 label1.grid(row=4, column=0, sticky='w', padx=10)
@@ -345,7 +346,7 @@ ent.grid(row=4, column=1, columnspan=4, sticky='nsew')
 label2 = tk.Label(root, text= 'Output:', font = "Calibri 14")
 label2.grid(row=6, column=0, columnspan=4, sticky='nsew')
 
-res = tk.Text(root, height=8, width=30)
+res = tk.Text(root, height=4, width=30, font = "Calibri 16")
 res.grid(row=7, column=0, rowspan=4, columnspan=4, sticky='nsew')
 
 ents = [ent, res, in_path, out_path]
@@ -367,14 +368,15 @@ botton4.grid(row=5, column=0, sticky='nsew', pady=10)
 
 
 #Generating Buttons
-teclado = ['$', '*']
-for i in range(0, 10):
+teclado = []
+for i in range(1, 10):
     teclado.append(str(i))
+teclado.extend(['$', '0', '*'])
 i, j = 0, 0
 for tecla in teclado:
-    row = 7 + i // 4 
-    column = 5 + j % 4
-    tk.Button(root, text=tecla, width=3, height=2, font = "bold 16", command=(lambda e= tecla: action(e))).grid(row=row, column=column)
+    row = 7 + i // 3
+    column = 5 + j % 3
+    tk.Button(root, text=tecla, width=3, height=1, font = "bold 16", command=(lambda e= tecla: action(e))).grid(row=row, column=column)
     i += 1
     j += 1
 
