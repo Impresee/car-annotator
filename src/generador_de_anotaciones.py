@@ -35,7 +35,7 @@ class App(tk.Frame):
 
     def _createCanvas(self, width_canvas, height_canvas):
         self.canvas = tk.Canvas(self.parent, width = width_canvas, height = height_canvas,
-                                bg = "white" )
+                                bg = "white")
         self.canvas.grid(row=1, column=0, columnspan=4, sticky='nsew')
 
         
@@ -80,12 +80,15 @@ class App(tk.Frame):
         #print('Rectangle ended')
         global scale_img
         factor = 1/scale_img
-        x = int(self.rectx0 * factor)
-        y = int(self.recty0 * factor)
-        w = int(abs(self.rectx0-self.rectx1) * factor)
-        h = int(abs(self.recty0-self.recty1) * factor)
+        #x = int(self.rectx0 * factor)
+        x = int(min(self.rectx0, self.rectx1) * factor)
+        y = int(min(self.recty0, self.recty1) * factor)
+        w = int(abs(self.rectx0 - self.rectx1) * factor)
+        h = int(abs(self.recty0 - self.recty1) * factor)
         rect = Rect(x, y, w, h)
         rect_lst.append(rect)
+        print(x,y,w,h)
+        print(width_img, height_img)
 
 
 def generar_anotacion(ents):
@@ -118,7 +121,7 @@ def generar_anotacion(ents):
         y = rect_lst[i].y
         w = rect_lst[i].w
         h = rect_lst[i].h
-        if x < width_img and y < height_img and x + w < width_img and y + h < height_img:
+        if x >= 0 and x <= width_img and y >= 0 and y <= height_img and x + w <= width_img and y + h <= height_img:
             text = text + '%s: %s\n' % (digit, rect_lst[i].to_string()) 
         else:
             text = 'Los bounding box deben estar dentro de la imagen'
@@ -150,6 +153,8 @@ def reset(ents, filename):
     global scale_img, width_img, height_img
     width_img = image.shape[1]
     height_img = image.shape[0]
+    width_img_scaled = width_img
+    height_img_scaled = height_img
     if width_img > width_canvas or height_img > height_canvas: 
         scale_img = 0.5
     elif width_img < width_canvas / 2 and height_img < height_canvas / 2: 
@@ -157,13 +162,16 @@ def reset(ents, filename):
     else:
         scale_img = 1
     if scale_img != 1:
-        dim = (int(width_img * scale_img), int(height_img * scale_img))
+        width_img_scaled = int(width_img * scale_img)
+        height_img_scaled = int(height_img * scale_img)
+        dim = (width_img_scaled, height_img_scaled)
         image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
         
     #print(width_img, height_img)
     image = Image.fromarray(image)
     image = ImageTk.PhotoImage(image)
     app.canvas.create_image(0, 0, image = image, anchor = "nw")
+    app.canvas.create_rectangle(0, 0, width_img_scaled, height_img_scaled, outline='green', fill='', width=2)
     ents[0].delete(0, tk.END)
     ents[1].delete('1.0', tk.END)
     root.mainloop()
@@ -198,12 +206,6 @@ class Rect:
         self.y = y
         self.w = w
         self.h = h
-    
-    def reduce(self, factor):
-        self.x = self.x * factor
-        self.y = self.y * factor
-        self.w = self.w * factor
-        self.h = self.h * factor
         
     def to_string(self):
         return '%s, %s, %s, %s' % (self.x, self.y, self.w, self.h)
