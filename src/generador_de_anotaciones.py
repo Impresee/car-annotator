@@ -121,7 +121,8 @@ def generar_anotacion(ents):
         if x >= 0 and x <= width_img and y >= 0 and y <= height_img and x + w <= width_img and y + h <= height_img:
             text = text + '%s: %s\n' % (digit, rect_lst[i].to_string()) 
         else:
-            text = 'Los bounding box deben estar dentro de la imagen'
+            text = 'Error: los bounding box deben estar dentro de la imagen'
+            print(text)
             break
     ents[1].delete('1.0', tk.END)
     ents[1].insert('1.0', text)
@@ -163,8 +164,7 @@ def reset(ents, filename):
         height_img_scaled = int(height_img * scale_img)
         dim = (width_img_scaled, height_img_scaled)
         image = cv2.resize(image, dim, interpolation = cv2.INTER_AREA)
-        
-    #print(width_img, height_img)
+    
     image = Image.fromarray(image)
     image = ImageTk.PhotoImage(image)
     app.canvas.create_image(0, 0, image = image, anchor = "nw")
@@ -184,6 +184,14 @@ def save_res(ents):
         void
    """
     global counter, total
+    output = ents[1].get("1.0", tk.END)
+    print(output)
+    if output.strip() == '' or 'Error' in output:
+        err = 'Error: Seleccione un bounding box'
+        print(err)
+        ents[1].delete('1.0', tk.END)
+        ents[1].insert('1.0', err)
+        return
     if total == 0:
         return
     filename = current_filename.split('.')[0] + '.txt'
@@ -254,7 +262,10 @@ def next_file(ents):
     in_path = ents[2].get().strip()
     out_path = ents[3].get().strip()
     if in_path == '' or out_path == '':
-        print('Error: Seleccione carpeta de entrada y salida')
+        err = 'Error: Seleccione carpeta de entrada y salida'
+        print(err)
+        ents[1].delete('1.0', tk.END)
+        ents[1].insert('1.0', err)
         return
     faltantes = get_faltantes(in_path, out_path)
     total = len(faltantes)
